@@ -74,6 +74,12 @@ options:
     required: false
     default: present
     choices: [ "present", "absent", "latest" ]
+  verbose:
+    description:
+      - Enables verbose output
+    required: false
+    default: no
+    choices: [ "yes", "no" ]
 '''
 
 EXAMPLES = '''
@@ -124,6 +130,7 @@ class Npm(object):
         self.registry = kwargs['registry']
         self.production = kwargs['production']
         self.ignore_scripts = kwargs['ignore_scripts']
+        self.verbose = kwargs['verbose']
 
         if kwargs['executable']:
             self.executable = kwargs['executable'].split(' ')
@@ -150,6 +157,8 @@ class Npm(object):
             if self.registry:
                 cmd.append('--registry')
                 cmd.append(self.registry)
+            if self.verbose:
+                cms.append('--verbose')
 
             #If path is specified, cd into that path and run the command.
             cwd = None
@@ -218,6 +227,7 @@ def main():
         registry=dict(default=None),
         state=dict(default='present', choices=['present', 'absent', 'latest']),
         ignore_scripts=dict(default=False, type='bool'),
+        verbose=dict(default='no', type='bool'),
     )
     arg_spec['global'] = dict(default='no', type='bool')
     module = AnsibleModule(
@@ -234,6 +244,7 @@ def main():
     registry = module.params['registry']
     state = module.params['state']
     ignore_scripts = module.params['ignore_scripts']
+    verbose = module.params['verbose']
 
     if not path and not glbl:
         module.fail_json(msg='path must be specified when not using global')
@@ -241,7 +252,7 @@ def main():
         module.fail_json(msg='uninstalling a package is only available for named packages')
 
     npm = Npm(module, name=name, path=path, version=version, glbl=glbl, production=production, \
-              executable=executable, registry=registry, ignore_scripts=ignore_scripts)
+              executable=executable, registry=registry, ignore_scripts=ignore_scripts, verbose=verbose)
 
     changed = False
     if state == 'present':
