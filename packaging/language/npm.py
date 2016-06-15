@@ -80,6 +80,7 @@ options:
     required: false
     default: no
     choices: [ "yes", "no" ]
+    version_added: "2.2"
 '''
 
 EXAMPLES = '''
