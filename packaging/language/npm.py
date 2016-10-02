@@ -159,7 +159,7 @@ class Npm(object):
                 cmd.append('--registry')
                 cmd.append(self.registry)
             if self.verbose:
-                cms.append('--verbose')
+                cmd.append('--verbose')
 
             #If path is specified, cd into that path and run the command.
             cwd = None
